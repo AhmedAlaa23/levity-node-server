@@ -1,0 +1,15 @@
+{
+  "name": "server-template",
+  "version": "0.0.1",
+  "description": "server template",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ahmed Alaa",
+  "license": "MIT",
+  "dependencies": {
+    "mime-types": "^2.1.27",
+    "raw-body": "^2.4.1"
+  }
+}
