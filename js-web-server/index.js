@@ -29,39 +29,73 @@ const Application = () => {
 					res.writeHead(fileData.status, {'Content-Type': fileData.contentType});
 					res.write(fileData.body);
 					res.end();
+					return;
 				}
 			}
 		}
 
-		// routers
-		for(let node in router.nodes){
+		//============= assemble routes routes
+		let routes = {};
 
-			if( node.includes(req.url) ){
+		for( let [node, nodeObj] of Object.entries(router.nodes) ){
 
-				if( req.method in router.nodes[`${req.url}`].methods || req.method.toLowerCase() in router.nodes[`${req.url}`].methods ){
-					if(node == req.url){
-						let nodeMethod = router.nodes[`${req.url}`].methods[`${req.method}`];
-						nodeMethod.default(req,res);
-					}
-					else{
+			for( let [path, pathObj] of Object.entries(nodeObj.paths) ){
+				let nodePath;
+				let params = [];
 
-						
-
-					}
+				if(path == '/'){
+					// default root
+					// nodePath = `${node}(/?)$`;
+					nodePath = `${node}$`;
+				}
+				else{
+					let paramsFromUrl = path.match(/\{(.*?)\}/g);
+					params = [...paramsFromUrl];
+					// example: '/api/products/(.*)/(.*)$'
+					nodePath = `${node}${path}$`.replace(/\{(.*?)\}/g, '[^/]+');
 				}
 
-			}
-
-		}
-
-		if(req.url in router.nodes){
-			if( req.method in router.nodes[`${req.url}`].methods || req.method.toLowerCase() in router.nodes[`${req.url}`].methods ){
-
-				let nodeMethod = router.nodes[`${req.url}`].methods[`${req.method}`];
-				nodeMethod.default(req,res);
-
+				routes[nodePath] = {methods: pathObj.methods};
 			}
 		}
+		// =========================
+
+		//=========== check for the routes
+		for(let route in routes){
+			if( req.url.match(route) !== null ){
+				if(req.method in routes[route].methods || req.method.toLowerCase() in routes[route].methods){
+					let methodUserController = routes[route].methods[`${req.method}`];
+					methodUserController(req,res);
+					return;
+				}
+			}
+		}
+		// =======================
+
+		//========== 404
+		if(req.method == 'GET'){
+			let page404Path = `${staticRoot}/${static404}`;
+			let fileData = getFile(page404Path);
+
+			// 404 of 404
+			if(fileData.status == 404){
+				res.writeHead(404, {'Content-Type': 'text/html'});
+				res.write("404");
+				res.end();
+				return;
+			}
+
+			res.writeHead(404, {'Content-Type': 'text/html'});
+			res.write(fileData.body);
+			res.end();
+			return;
+		}
+		else{
+			res.writeHead(404, {'Content-Type': 'text/json'});
+			res.write(JSON.stringify({status: '404', error: '404'}));
+			res.end();
+		}
+		// =================
 
 	};
 
@@ -86,12 +120,13 @@ function getStaticFile(req, staticRoot, staticIndex, static404, staticOptions){
 	let pathName = url.parse(req.url, true).pathname;
 	let filePath = staticRoot + pathName;
 	let page404Path = staticRoot + static404;
-	let pathExt = path.parse(pathName).ext;
 
 	if(pathName == "/"){filePath += staticIndex}
+	
+	let pathExt = path.parse(filePath).ext;
 	if(pathExt == ""){filePath += ".html"}
 
-	var fileExt = path.extname(filePath);
+	let fileExt = path.extname(filePath);
 	let fileData;
 	if( staticOptions.isFileEmbedEnabled && fileExt == ".html" ){
 		fileData = assembleFile(filePath);

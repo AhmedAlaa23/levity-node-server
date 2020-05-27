@@ -1,4 +1,4 @@
-var Application = require('./framework/index.js');
+var Application = require('./js-web-server/index.js');
 
 var app = Application();
 
@@ -7,21 +7,29 @@ app.listen(4000);
 
 app.setRouter({
 	nodes: {
+		
 		'/api/products': {
-			methods: {
-				'GET': {
-					default: getProducts,
-					params: {
-						'/id': getProduct,
-						'/id/cat': getProduct,
+			paths:{
+				'/': {
+					methods: {
+						'GET': getProducts,
+						'POST': addProduct
+					},
+				},
+				'/{id}': {
+					methods: {
+						"GET": getProduct,
+						"POST": addProduct
 					}
 				},
-				'POST': {
-					default: addProduct,
-					params: {},
-				},
-			}
+				'/{id}/{cat}': {
+					methods: {
+						'GET': getProduct
+					}
+				}
+			},
 		}
+
 	}
 });
 

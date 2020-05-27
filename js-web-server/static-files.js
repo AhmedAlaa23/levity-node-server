@@ -34,23 +34,23 @@ function embedIncludes(data){
 
 function assembleFile(filePath){
 	
+	console.log(filePath);
+
 	var data;
-	var status;
 
 	try{
 		data = fs.readFileSync(filePath);
 	}catch(err){
-		console.log("404");
 		return {status: 404, contentType: 'text/html', body: "404"};
 	}
 
-	var parsedPath = path.parse(filePath);
-	if(parsedPath.name == "404"){
-		status = 404;
-	}
-	else{
-		status = 200;
-	}
+	// var parsedPath = path.parse(filePath);
+	// if(parsedPath.name == "404"){
+	// 	status = 404;
+	// }
+	// else{
+	// 	status = 200;
+	// }
 
 	//==================== includes	
 	data = embedIncludes(data);
@@ -69,7 +69,7 @@ function assembleFile(filePath){
 		}
 	}
 
-	return {status: status, contentType: "text/html; charset=utf-8", body: data};
+	return {status: 200, contentType: "text/html; charset=utf-8", body: data};
 }
 
 function getFile(fileName){
