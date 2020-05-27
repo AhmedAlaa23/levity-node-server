@@ -40,7 +40,7 @@ function getProducts(req, res){
 }
 
 function getProduct(req, res){
-	res.write('api get single product');
+	res.write(`api get single product, id: ${req.params.id}`);
 	res.end();
 	console.log('get single product');
 }

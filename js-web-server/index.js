@@ -5,7 +5,9 @@ var path = require('path');
 
 var getRawBody = require('raw-body');
 
-var {getFile, assembleFile} = require('./static-files.js');
+var {getFile, assembleFile} = require('./lib/static-files.js');
+var createAppRequest = require('./lib/request.js');
+var createAppResponse = require('./lib/response.js');
 
 
 const Application = () => {
@@ -40,32 +42,42 @@ const Application = () => {
 		for( let [node, nodeObj] of Object.entries(router.nodes) ){
 
 			for( let [path, pathObj] of Object.entries(nodeObj.paths) ){
-				let nodePath;
+				let routePath = '';
+				let routeRegex = '';
 				let params = [];
 
 				if(path == '/'){
 					// default root
-					// nodePath = `${node}(/?)$`;
-					nodePath = `${node}$`;
+					// routePath = `${node}(/?)$`;
+					routePath = `${node}`;
+					routeRegex = `${node}$`;
 				}
 				else{
 					let paramsFromUrl = path.match(/\{(.*?)\}/g);
 					params = [...paramsFromUrl];
-					// example: '/api/products/(.*)/(.*)$'
-					nodePath = `${node}${path}$`.replace(/\{(.*?)\}/g, '[^/]+');
+					// example: '/api/products/[^/]+/[^/]+$'
+					routePath = `${node}${path}`;
+					routeRegex = `${node}${path}$`.replace(/\{(.*?)\}/g, '[^/]+');
 				}
 
-				routes[nodePath] = {methods: pathObj.methods};
+				routes[routePath] = {
+					routeRegex: routeRegex,
+					methods: pathObj.methods,
+					params: params
+				};
 			}
 		}
 		// =========================
 
 		//=========== check for the routes
 		for(let route in routes){
-			if( req.url.match(route) !== null ){
+			if( req.url.match(routes[route].routeRegex) !== null ){
 				if(req.method in routes[route].methods || req.method.toLowerCase() in routes[route].methods){
 					let methodUserController = routes[route].methods[`${req.method}`];
-					methodUserController(req,res);
+					let appRequest = createAppRequest(req, route, [...routes[route].params]);
+					// let appResponse = createAppResponse(req, route, [...routes[route].params]);
+					
+					methodUserController(appRequest, res);
 					return;
 				}
 			}

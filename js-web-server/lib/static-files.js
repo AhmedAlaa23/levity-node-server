@@ -33,8 +33,6 @@ function embedIncludes(data){
 }
 
 function assembleFile(filePath){
-	
-	console.log(filePath);
 
 	var data;
 
