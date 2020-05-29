@@ -46,7 +46,7 @@ function getProduct(req, res){
 }
 
 function addProduct(req, res){
-	res.write('api add product');
+	res.write(`api add product ${req.body.name} ${req.body.age} `);
 	res.end();
 	console.log('add single product');
 }

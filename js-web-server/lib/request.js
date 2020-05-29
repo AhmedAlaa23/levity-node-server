@@ -1,5 +1,31 @@
+var getRawBody = require('raw-body');
 
-function request(reqRow, route, reqParams=[]){
+function handleRowBody(req, reqBodyType){
+	return new Promise((resolve, reject)=>{
+		getRawBody(req, {length: req.headers['content-length'],limit: '1mb',encoding: true}, function(err, body){
+			if(err){ console.log(err) }
+	
+			if(reqBodyType == 'json'){
+				try{
+					body = JSON.parse(body);
+					resolve({success: true, body})
+				}catch(e){
+					resolve({success: false, err: 'Invalid JSON'})
+				}
+			}
+			else if(reqBodyType == 'text'){
+				resolve({success: true, body});
+			}
+			else{
+				console.log('Invalid Body Type !');
+				resolve({success: false, err: 'Invalid Body Type'})
+			}
+	
+		});
+	});
+}
+
+async function request(reqRow, route, reqParams=[], reqBodyType){
 
 	// =========== assign params object =========
 	let params = {};
@@ -16,11 +42,24 @@ function request(reqRow, route, reqParams=[]){
 	}
 	// ==================
 
+	let rawBodyRes;
+	try{
+		rawBodyRes = await handleRowBody(reqRow, reqBodyType);
+	}catch(e){console.log(e)}
+
+	if(!rawBodyRes.success){
+		return {success: false, err: rawBodyRes.err}
+	}
+
 	return{
-		row: reqRow,
-		url: reqRow.url,
-		method: reqRow.method,
-		params: params
+		success: true,
+		data: {
+			row: reqRow,
+			url: reqRow.url,
+			method: reqRow.method,
+			params: params,
+			body: rawBodyRes.body
+		}
 	}
 }
 

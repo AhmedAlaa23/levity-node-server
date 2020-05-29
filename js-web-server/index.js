@@ -3,11 +3,8 @@ var url = require('url');
 var fs = require('fs');
 var path = require('path');
 
-var getRawBody = require('raw-body');
-
 var {getFile, assembleFile} = require('./lib/static-files.js');
-var createAppRequest = require('./lib/request.js');
-var createAppResponse = require('./lib/response.js');
+var routerController = require('./lib/router.js');
 
 
 const Application = () => {
@@ -20,13 +17,14 @@ const Application = () => {
 
 	let router = {};
 
-	var controller = (req,res)=>{
+	var controller = async (req,res)=>{
 		
 		// check for static files
 		if(isStaticEnabled){
 			if(req.method == 'GET'){
 				let fileData = getStaticFile(req, staticRoot, staticIndex, static404, staticOptions);
-				
+				console.log(fileData.status);
+
 				if(fileData.status == 200){
 					res.writeHead(fileData.status, {'Content-Type': fileData.contentType});
 					res.write(fileData.body);
@@ -36,51 +34,24 @@ const Application = () => {
 			}
 		}
 
-		//============= assemble routes routes
-		let routes = {};
+		let routerRes;
+		try{
+			routerRes = await routerController(req, res, router);
+		}catch(e){console.log(e)}
 
-		for( let [node, nodeObj] of Object.entries(router.nodes) ){
-
-			for( let [path, pathObj] of Object.entries(nodeObj.paths) ){
-				let routePath = '';
-				let routeRegex = '';
-				let params = [];
-
-				if(path == '/'){
-					// default root
-					// routePath = `${node}(/?)$`;
-					routePath = `${node}`;
-					routeRegex = `${node}$`;
-				}
-				else{
-					let paramsFromUrl = path.match(/\{(.*?)\}/g);
-					params = [...paramsFromUrl];
-					// example: '/api/products/[^/]+/[^/]+$'
-					routePath = `${node}${path}`;
-					routeRegex = `${node}${path}$`.replace(/\{(.*?)\}/g, '[^/]+');
-				}
-
-				routes[routePath] = {
-					routeRegex: routeRegex,
-					methods: pathObj.methods,
-					params: params
-				};
-			}
+		if(routerRes.status == 'ok'){
+			routerRes.methodUserController(routerRes.appRequest, routerRes.appResponse);
+			return;
 		}
-		// =========================
-
-		//=========== check for the routes
-		for(let route in routes){
-			if( req.url.match(routes[route].routeRegex) !== null ){
-				if(req.method in routes[route].methods || req.method.toLowerCase() in routes[route].methods){
-					let methodUserController = routes[route].methods[`${req.method}`];
-					let appRequest = createAppRequest(req, route, [...routes[route].params]);
-					// let appResponse = createAppResponse(req, route, [...routes[route].params]);
-					
-					methodUserController(appRequest, res);
-					return;
-				}
-			}
+		else if(routerRes.status == 'err'){
+			res.writeHead(200, {'Content-Type': 'text/json'});
+			res.write(JSON.stringify({err: routerRes.err}));
+			res.end();
+			return;
+		}
+		else if(routerRes.status == 'pass'){
+			// no route was found
+			// do nothing
 		}
 		// =======================
 
@@ -128,6 +99,8 @@ const Application = () => {
 	}
 }
 
+// =========================
+
 function getStaticFile(req, staticRoot, staticIndex, static404, staticOptions){
 	let pathName = url.parse(req.url, true).pathname;
 	let filePath = staticRoot + pathName;
@@ -146,15 +119,6 @@ function getStaticFile(req, staticRoot, staticIndex, static404, staticOptions){
 	else{
 		fileData = getFile(filePath);
 	}
-
-	// // 404
-	// if(fileData.status == 404){
-	// 	fileData = getFile(page404Path);
-	// 	// 404 of 404
-	// 	if(fileData.status == 404){
-
-	// 	}
-	// }
 
 	return fileData;
 }
