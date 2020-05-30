@@ -3,7 +3,10 @@ var getRawBody = require('raw-body');
 function handleRowBody(req, reqBodyType){
 	return new Promise((resolve, reject)=>{
 		getRawBody(req, {length: req.headers['content-length'],limit: '1mb',encoding: true}, function(err, body){
-			if(err){ console.log(err) }
+			if(err){ 
+				console.log(err)
+				resolve({success: false, err: err})
+			}
 	
 			if(reqBodyType == 'json'){
 				try{
@@ -13,12 +16,8 @@ function handleRowBody(req, reqBodyType){
 					resolve({success: false, err: 'Invalid JSON'})
 				}
 			}
-			else if(reqBodyType == 'text'){
-				resolve({success: true, body});
-			}
 			else{
-				console.log('Invalid Body Type !');
-				resolve({success: false, err: 'Invalid Body Type'})
+				resolve({success: true, body});
 			}
 	
 		});

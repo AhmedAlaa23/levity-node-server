@@ -5,6 +5,7 @@ var path = require('path');
 
 var {getFile, assembleFile} = require('./lib/static-files.js');
 var routerController = require('./lib/router.js');
+var response = require('./lib/response.js');
 
 
 const Application = () => {
@@ -23,7 +24,6 @@ const Application = () => {
 		if(isStaticEnabled){
 			if(req.method == 'GET'){
 				let fileData = getStaticFile(req, staticRoot, staticIndex, static404, staticOptions);
-				console.log(fileData.status);
 
 				if(fileData.status == 200){
 					res.writeHead(fileData.status, {'Content-Type': fileData.contentType});
@@ -44,9 +44,13 @@ const Application = () => {
 			return;
 		}
 		else if(routerRes.status == 'err'){
-			res.writeHead(200, {'Content-Type': 'text/json'});
-			res.write(JSON.stringify({err: routerRes.err}));
-			res.end();
+			if(router.errHandler !== undefined && typeof(router.errHandler) === "function" ){
+				// call the user err handler if set
+				router.errHandler(routerRes.err, routerRes.route, response(res));
+			}else{
+				// call default err handler
+				response(res).errJson({err: routerRes.err});
+			}
 			return;
 		}
 		else if(routerRes.status == 'pass'){

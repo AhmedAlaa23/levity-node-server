@@ -1,0 +1,26 @@
+app.setRouter({
+	nodes: {
+		'/api/products': {
+			paths:{
+				'/': {
+					methods: {
+						'GET': {handler: getProducts},
+						'POST': {handler: addProduct, reqContentType: 'json'}
+					},
+				},
+				'/{id}': {
+					methods: {
+						"GET": {handler: getProduct},
+					}
+				},
+				'/{id}/{cat}': {
+					methods: {
+						'GET': {handler: getProduct}
+					}
+				}
+			},
+		}
+	},
+	errHandler: errHandler,
+	reqContentType: 'json',
+});

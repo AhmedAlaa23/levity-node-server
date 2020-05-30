@@ -38,23 +38,22 @@ async function routerController(req, res, router){
 	for(let route in routes){
 		if( req.url.match(routes[route].routeRegex) !== null ){
 			if(req.method in routes[route].methods || req.method.toLowerCase() in routes[route].methods){
-				let methodUserController = routes[route].methods[`${req.method}`];
+				let methodUserController = routes[route].methods[`${req.method}`].handler;
 				
-				let reqBodyType = 'json';
+				let reqContentType = routes[route].methods[`${req.method}`].reqContentType || router.reqContentType || 'json';
 				
 				let appRequest;
 				try{
-					appRequest = await createAppRequest(req, route, [...routes[route].params], reqBodyType);
+					appRequest = await createAppRequest(req, route, [...routes[route].params], reqContentType);
 				}catch(e){console.log(e)}
-
-				// let appResponse = createAppResponse(req, route, [...routes[route].params]);
-				let appResponse = res;
+				
+				let appResponse = createAppResponse(res);
 
 				if(appRequest.success){
 					return {status: 'ok', methodUserController, appRequest: appRequest.data, appResponse};
 				}
 				else{
-					return {status: 'err', err: appRequest.err, reqBodyType};
+					return {status: 'err', err: appRequest.err, route};
 				}
 
 			}

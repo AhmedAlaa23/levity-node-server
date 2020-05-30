@@ -7,46 +7,64 @@ app.listen(4000);
 
 app.setRouter({
 	nodes: {
-		
 		'/api/products': {
 			paths:{
 				'/': {
 					methods: {
-						'GET': getProducts,
-						'POST': addProduct
+						'GET': {handler: getProducts},
+						'POST': {handler: addProduct, reqContentType: 'json'}
 					},
 				},
 				'/{id}': {
 					methods: {
-						"GET": getProduct,
-						"POST": addProduct
+						"GET": {handler: getProduct},
 					}
 				},
 				'/{id}/{cat}': {
 					methods: {
-						'GET': getProduct
+						'GET': {handler: getProduct}
 					}
 				}
 			},
 		}
-
-	}
+	},
+	errHandler: errHandler,
+	reqContentType: 'json',
 });
 
 function getProducts(req, res){
 	console.log('get products');
-	res.write('api get products');
-	res.end();
+	res.json([{id: 1, name: 'Pixel5'},{id: 2, name: 'iPhone'}]);
 }
 
-function getProduct(req, res){
-	res.write(`api get single product, id: ${req.params.id}`);
-	res.end();
+function dbGet(){
+	return new Promise((resolve,reject)=>{
+		setTimeout(()=>{
+			resolve('Pixel5');
+		}, 1000)
+	});
+}
+
+async function getProduct(req, res){
+
+	let productName = await dbGet();
+
+	res.json({id: 1, name: productName});
+
 	console.log('get single product');
+	// res.json({id: 1, name: 'Pixel4'});
 }
 
 function addProduct(req, res){
-	res.write(`api add product ${req.body.name} ${req.body.age} `);
-	res.end();
 	console.log('add single product');
+
+	console.log(req.body.name);
+
+	res.json({status: 'ok', id: 3, name: 'iPhone12'});
+}
+
+function errHandler(err, route, res){
+	console.log("err: ", err);
+	// res.respond({status: 401, contentType: 'application/json', body: JSON.stringify({err: 'err'})});
+	res.errJson({status: 'err', 'err': err});
 }
