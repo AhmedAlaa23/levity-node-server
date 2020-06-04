@@ -26,7 +26,7 @@ app.setRouter({
 					}
 				}
 			},
-		}
+		},
 	},
 	errHandler: errHandler,
 	reqContentType: 'json',
@@ -52,6 +52,8 @@ async function getProduct(req, res){
 	res.json({id: 1, name: productName});
 
 	console.log('get single product');
+	console.log(req.params);
+
 	// res.json({id: 1, name: 'Pixel4'});
 }
 
@@ -61,6 +63,18 @@ function addProduct(req, res){
 	console.log(req.body.name);
 
 	res.json({status: 'ok', id: 3, name: 'iPhone12'});
+}
+
+function getProductsTypes(req, res){
+	res.json({msg: 'get products types'});
+}
+
+function getProductType(req, res){
+	res.json({msg: 'get single products types'});
+}
+
+function addProductType(req, res){
+	res.json({msg: 'add product type'});
 }
 
 function errHandler(err, route, res){

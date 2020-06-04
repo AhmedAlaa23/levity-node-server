@@ -16,14 +16,14 @@ async function routerController(req, res, router){
 				// default root
 				// routePath = `${node}(/?)$`;
 				routePath = `${node}`;
-				routeRegex = `${node}$`;
+				routeRegex = `${node}/?$`;
 			}
 			else{
 				let paramsFromUrl = path.match(/\{(.*?)\}/g);
 				params = [...paramsFromUrl];
 				// example: '/api/products/[^/]+/[^/]+$'
 				routePath = `${node}${path}`;
-				routeRegex = `${node}${path}$`.replace(/\{(.*?)\}/g, '[^/]+');
+				routeRegex = `${node}${path}$`.replace(/\{(.*?)\}/g, '[^/]+/?');
 			}
 
 			routes[routePath] = {
