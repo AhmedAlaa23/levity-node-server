@@ -1,4 +1,4 @@
-var Application = require('./js-web-server/index.js');
+var Application = require('../../lib/index.js');
 
 var app = Application();
 

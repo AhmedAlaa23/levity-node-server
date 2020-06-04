@@ -1,0 +1,4 @@
+#npm ignored files and folder
+
+examples/
+docs/

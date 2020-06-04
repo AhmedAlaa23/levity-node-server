@@ -1,8 +1,8 @@
 {
-  "name": "levity-node-server",
+  "name": "levity-server",
   "version": "0.0.1",
   "description": "Simple Nodejs Server",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\""
   },
@@ -10,7 +10,7 @@
   "license": "MIT",
   "repository": {
     "type" : "git",
-    "url" : "https://github.com/AhmedAlaa23/js-web-server.git"
+    "url" : "https://github.com/AhmedAlaa23/levity-node-server.git"
   },
   "dependencies": {
     "mime-types": "^2.1.27",
