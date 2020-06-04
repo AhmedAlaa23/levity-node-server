@@ -9,11 +9,12 @@
   "author": "Ahmed Alaa",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/AhmedAlaa23/levity-node-server.git"
+    "type": "git",
+    "url": "https://github.com/AhmedAlaa23/levity-node-server.git"
   },
   "dependencies": {
     "mime-types": "^2.1.27",
+    "np": "^6.2.3",
     "raw-body": "^2.4.1"
   }
 }
