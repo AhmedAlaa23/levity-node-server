@@ -5,6 +5,8 @@ var app = Application();
 console.log("Listening at 4000");
 app.listen(4000);
 
+app.static();
+
 app.setRouter({
 	nodes: {
 		'/api/products': {
