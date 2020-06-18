@@ -11,7 +11,7 @@ $ npm install levity-server
 ## Getting Started
 
 ```
-var Application = require('levity-server');
+import Application from 'levity-server';
 
 var app = Application();
 
@@ -42,7 +42,7 @@ app.setRouter({
 
 Any files inside the public directory will be static files
 ```
-var Application = require('levity-server');
+import Application from 'levity-server';
 
 var app = Application();
 
