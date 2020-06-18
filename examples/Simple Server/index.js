@@ -1,4 +1,4 @@
-var Application = require('../../lib/index.js');
+import Application from '../../lib/index.js';
 
 var app = Application();
 
