@@ -10,7 +10,7 @@ $ npm install levity-server
 
 ## Getting Started
 
-```
+```javascript
 import Application from 'levity-server';
 
 var app = Application();
@@ -41,7 +41,8 @@ app.setRouter({
 ## Simple Static Server
 
 Any files inside the public directory will be static files
-```
+
+```javascript
 import Application from 'levity-server';
 
 var app = Application();
@@ -53,6 +54,7 @@ app.static();
 ```
 
 Static function parameters
-```
+
+```javascript
 static(root='public', index='index.html', page404Name='404.html', options={})
 ```
