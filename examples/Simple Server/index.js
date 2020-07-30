@@ -9,24 +9,24 @@ app.static();
 
 app.setRouter({
 	nodes: {
-		'/api/products': {
+		'/api/users': {
 			paths:{
 				'/': {
 					methods: {
-						'GET': {handler: getProducts},
-						'POST': {handler: addProduct, reqContentType: 'json'}
+						'GET': {handler: getUsers},
+						'POST': {handler: addUser, reqContentType: 'json'}
 					},
 				},
 				'/{id}': {
 					methods: {
-						"GET": {handler: getProduct},
+						"GET": {handler: getUser},
 					}
 				},
 				'/{id}/{cat}': {
 					methods: {
-						'GET': {handler: getProduct}
+						'GET': {handler: getUser}
 					}
-				}
+				},
 			},
 		},
 	},
@@ -34,49 +34,56 @@ app.setRouter({
 	reqContentType: 'json',
 });
 
-function getProducts(req, res){
-	console.log('get products');
-	res.json([{id: 1, name: 'Pixel5'},{id: 2, name: 'iPhone'}]);
+function getUsers(req, res){
+
+	console.log(req.query);
+
+	console.log('get users');
+	res.json([{id: 1, name: 'David'},{id: 2, name: 'felix'}]);
 }
 
 function dbGet(){
 	return new Promise((resolve,reject)=>{
 		setTimeout(()=>{
-			resolve('Pixel5');
+			resolve('David');
 		}, 1000)
 	});
 }
 
-async function getProduct(req, res){
+async function getUser(req, res){
 
-	let productName = await dbGet();
+	let userName = await dbGet();
 
-	res.json({id: 1, name: productName});
-
-	console.log('get single product');
+	console.log('get single user');
 	console.log(req.params);
 
-	// res.json({id: 1, name: 'Pixel4'});
+	res.json({id: 1, name: userName});
 }
 
-function addProduct(req, res){
-	console.log('add single product');
+function addUser(req, res){
+	console.log('add single user');
+
+	let name = req.body.name;
 
 	console.log(req.body.name);
 
-	res.json({status: 'ok', id: 3, name: 'iPhone12'});
+	res.json({status: 'ok', id: 3, name: name});
 }
 
-function getProductsTypes(req, res){
-	res.json({msg: 'get products types'});
+function searchUsers(req,res){
+	res.json({msg: 'Search Users'});
 }
 
-function getProductType(req, res){
-	res.json({msg: 'get single products types'});
+function getUsersTypes(req, res){
+	res.json({msg: 'get users types'});
 }
 
-function addProductType(req, res){
-	res.json({msg: 'add product type'});
+function getUserType(req, res){
+	res.json({msg: 'get single users types'});
+}
+
+function addUserType(req, res){
+	res.json({msg: 'add user type'});
 }
 
 function errHandler(err, route, res){
