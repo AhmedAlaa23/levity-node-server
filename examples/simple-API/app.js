@@ -90,7 +90,8 @@ app.setRouter({
 	errHandler: errHandler,
 });
 
-app.setAccessControlAllowOrigin('*');
+app.setAccessControl({ AccessControlAllowOrigin: '*', AccessControlAllowMethods: ['GET','POST','PUT','DELETE','OPTIONS'] });
+app.CORSPreFlight();
 
 function errHandler(err, route, res){
 	console.log("err: ", err);
