@@ -1,23 +1,23 @@
 import application from './../../lib/index.js';
 
-const searchAccounts = (req,res)=>{
-	res.json({msg: "Search Accounts"})
+const searchUsers = (req,res)=>{
+	res.json({msg: "Search Users"})
 }
 
-const addAccount = (req,res)=>{
-	res.json({msg: "Add Accounts"})
+const addUser = (req,res)=>{
+	res.json({msg: "Add Users"})
 }
 
-const getAccount = (req,res)=>{
-	res.json({msg: "Get Accounts"})
+const getUser = (req,res)=>{
+	res.json({msg: `Get Users id: ${req.params.id}`})
 }
 
-const editAccount = (req,res)=>{
-	res.json({msg: "Edit Accounts"})
+const editUser = (req,res)=>{
+	res.json({msg: "Edit Users"})
 }
 
-const deleteAccount = (req,res)=>{
-	res.json({msg: "Delete Accounts"})
+const deleteUser = (req,res)=>{
+	res.json({msg: "Delete Users"})
 }
 
 
@@ -41,11 +41,22 @@ const deleteProduct = (req,res)=>{
 	res.json({msg: "Delete Products"})
 }
 
+const getGeneralReport = (req,res)=>{
+	res.json({msg: "Get General Report"})
+}
+
+const getAccountReport = (req,res)=>{
+	res.json({msg: "Get Account Report"})
+}
+
+const getProductReport = (req,res)=>{
+	res.json({msg: "Get Product Report"})
+}
 
 var app = application();
 
 
-app.listen(3000);
+app.listen(3030);
 
 app.setRouter({
 	nodes: {
@@ -53,15 +64,15 @@ app.setRouter({
 			paths:{
 				'/': {
 					methods: {
-						'GET': {handler: searchAccounts},
-						'POST': {handler: addAccount},
+						'GET': {handler: searchUsers},
+						'POST': {handler: addUser},
 					},
 				},
 				'/{id}': {
 					methods: {
-						"GET": {handler: getAccount},
-						"PUT": {handler: editAccount},
-						"DELETE": {handler: deleteAccount},
+						"GET": {handler: getUser},
+						"PUT": {handler: editUser},
+						"DELETE": {handler: deleteUser},
 					}
 				},
 			},
@@ -84,6 +95,27 @@ app.setRouter({
 				},
 			},
 		},
+
+		'/reports': {
+			paths:{
+				'/general': {
+					methods: {
+						'GET': {handler: getGeneralReport}
+					}
+				},
+				'/accounts': {
+					methods: {
+						'GET': {handler: getAccountReport},
+					}
+				},
+				'/products': {
+					methods: {
+						'GET': {handler: getProductReport},
+					}
+				}
+			}
+		}
+
 	},
 	
 	
