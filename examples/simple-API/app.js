@@ -2,75 +2,80 @@ import application from './../../lib/index.js';
 
 const searchUsers = (req,res)=>{
 	console.log(req.query);
-	res.json({msg: "Search Users"})
+	return res.json({msg: "Search Users"})
 }
 
 const addUser = (req,res)=>{
-	console.log(req.body);
-	res.json({msg: "Add Users"})
+	console.log('User:', req.body);
+	return res.json({msg: "Add Users"})
 }
 
 const getUser = (req,res)=>{
-	res.json({msg: `Get Users id: ${req.params.id}`})
+	return res.json({msg: `Get Users id: ${req.params.id}`})
 }
 
 const getUserByIdAndEmail = (req,res)=>{
-	res.json({msg: `Get Users id: ${req.params.id}, email: ${req.params.email}`})
+	return res.json({msg: `Get Users id: ${req.params.id}, email: ${req.params.email}`})
 }
 
 const getUserStatus = (req,res)=>{
-	res.json({msg: `Get User Status id: ${req.params.id}`})
+	return res.json({msg: `Get User Status id: ${req.params.id}`})
 }
 
 const getUserStatus2 = (req,res)=>{
-	res.json({msg: `Get User Status2 id: ${req.params.id}`})
+	return res.json({msg: `Get User Status2 id: ${req.params.id}`})
 }
 
 const editUser = (req,res)=>{
 	console.log(req.body);
-	res.json({msg: `Edit Users ${req.params.id}`})
+	return res.json({msg: `Edit Users ${req.params.id}`})
 }
 
 const deleteUser = (req,res)=>{
-	res.json({msg: "Delete Users"})
+	return res.json({msg: "Delete Users"})
 }
 
+const getUserHTMLPage = (req,res)=>{
+	return res.html(`<h1>Hello User ${req.query.name}</h1>`)
+}
 
 const searchProducts = (req,res)=>{
-	res.json({msg: "Search Products"})
+	return res.json({msg: "Search Products"})
 }
 
 const addProduct = (req,res)=>{
-	res.json({msg: "Add Products"})
+	return res.json({msg: "Add Products"})
 }
 
 const getProduct = (req,res)=>{
-	res.json({msg: "Get Products"})
+	return res.json({msg: "Get Products"})
 }
 
 const editProduct = (req,res)=>{
-	res.json({msg: "Edit Products"})
+	return res.json({msg: "Edit Products"})
 }
 
 const deleteProduct = (req,res)=>{
-	res.json({msg: "Delete Products"})
+	return res.json({msg: "Delete Products"})
 }
 
 const getGeneralReport = (req,res)=>{
-	res.json({msg: "Get General Report"})
+	return res.json({msg: "Get General Report"})
 }
 
 const getUsersReport = (req,res)=>{
-	res.json({msg: "Get Account Report"})
+	return res.json({msg: "Get Account Report"})
 }
 
 const getProductReport = (req,res)=>{
-	res.json({msg: "Get Product Report"})
+	return res.json({msg: "Get Product Report"})
 }
 
-var app = application();
+const app = application();
 
-app.listen(3030);
+app.listen(3030, ()=>{
+	console.log('Server Listening on 3030');
+});
 
 app.setRouter({
 	nodes: {
@@ -89,22 +94,21 @@ app.setRouter({
 						"DELETE": {handler: deleteUser},
 					}
 				},
-				//todo: fix this case
 				'/{id}/{email}': {
 					methods: {
 						"GET": {handler: getUserByIdAndEmail},
 					}
 				},
-				'/{id}/status': {
-					methods: {
-						"GET": {handler: getUserStatus},
-					}
-				},
-				'/status/{id}': {
-					methods: {
-						"GET": {handler: getUserStatus2},
-					}
-				},
+				// '/{id}/status': {
+				// 	methods: {
+				// 		"GET": {handler: getUserStatus},
+				// 	}
+				// },
+				// '/status/{id}': {
+				// 	methods: {
+				// 		"GET": {handler: getUserStatus2},
+				// 	}
+				// },
 			},
 		},
 		
@@ -144,7 +148,17 @@ app.setRouter({
 					}
 				}
 			}
-		}
+		},
+
+		'/get_html_page': {
+			paths:{
+				'/users': {
+					methods: {
+						"GET": {handler: getUserHTMLPage},
+					}
+				}
+			}
+		},
 
 	},
 	
