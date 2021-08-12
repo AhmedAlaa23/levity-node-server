@@ -1,11 +1,13 @@
 import application from './../../lib/index.js';
 
 const searchUsers = (req,res)=>{
+	// console.log('request raw:', req.raw);
 	console.log(req.query);
 	return res.json({msg: "Search Users"})
 }
 
 const addUser = (req,res)=>{
+	// console.log('headers:', req.headers);
 	console.log('User:', req.body);
 	return res.json({msg: "Add Users"})
 }
