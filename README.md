@@ -91,12 +91,32 @@ app.setRouter({
 
 	},
 	
+	defaultAuthData: {type:'public', anyInfo: 'defaultAuthInfo'},
+
 	errHandler: errHandler,
 	notFoundHandler: notFoundHandler
 });
 
+app.auth({handler: authHandler});
+
 app.setAccessControl({ AccessControlAllowOrigin: '*', AccessControlAllowMethods: ['GET','POST','PUT','DELETE','OPTIONS'] });
 app.CORSPreFlight();
+
+function authHandler({req, res, routePath, routeAuth}){
+	console.log(routePath, routeAuth);
+	
+	if(routeAuth.type==='public'){
+		return true;
+	}
+	else{
+		const bearerToken = req.headers.authorization.split(' ')[1];
+		if(bearerToken!=='secret_bearer_token'){
+			res.errJson({msg: 'Unauthorized !'}, {status: 401})
+			return false;
+		}
+		return true;
+	}
+}
 
 function errHandler({err, routePath, res}){
 	console.log("err: ", err);

@@ -1,6 +1,6 @@
 {
   "name": "levity-server",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Simple Nodejs Server",
   "main": "lib/index.js",
   "scripts": {
